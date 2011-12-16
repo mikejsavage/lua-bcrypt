@@ -48,7 +48,9 @@ static int luabcrypt_verify( lua_State *L )
 	char *encrypted = malloc( _PASSWORD_LEN );
 	bcrypt( key, digest, encrypted );
 
-	lua_pushboolean( L, strncmp( encrypted, digest, _PASSWORD_LEN ) == 0 );
+	int verified = strncmp( encrypted, digest, _PASSWORD_LEN ) == 0;
+
+	lua_pushboolean( L, verified );
 
 	free( encrypted );
 
