@@ -29,6 +29,7 @@ static int luabcrypt_gensalt( lua_State *L )
 {
 	u_int8_t log_rounds = luaL_checkinteger( L, 1 );
 
+	// because the OpenBSD implementation says so
 	char *salt = malloc( 7 + ( BCRYPT_MAXSALT * 4 + 2 ) / 3 + 1 );
 	bcrypt_gensalt( log_rounds, salt );
 
