@@ -8,6 +8,7 @@
 
 #include "blf.h"
 
+// bcrypt.digest( key, salt )
 static int luabcrypt_digest( lua_State *L )
 {
 	const char *key = luaL_checkstring( L, 1 );
@@ -23,6 +24,7 @@ static int luabcrypt_digest( lua_State *L )
 	return 1;
 }
 
+// bcrypt.gensalt( logRounds )
 static int luabcrypt_gensalt( lua_State *L )
 {
 	u_int8_t logRounds = luaL_checkinteger( L, 1 );
@@ -37,6 +39,7 @@ static int luabcrypt_gensalt( lua_State *L )
 	return 1;
 }
 
+// bcrypt.verify( key, digest )
 static int luabcrypt_verify( lua_State *L )
 {
 	const char *key = luaL_checkstring( L, 1 );
