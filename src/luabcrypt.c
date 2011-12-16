@@ -27,10 +27,10 @@ static int luabcrypt_digest( lua_State *L )
 // bcrypt.gensalt( logRounds )
 static int luabcrypt_gensalt( lua_State *L )
 {
-	u_int8_t logRounds = luaL_checkinteger( L, 1 );
+	u_int8_t log_rounds = luaL_checkinteger( L, 1 );
 
 	char *salt = malloc( 7 + ( BCRYPT_MAXSALT * 4 + 2 ) / 3 + 1 );
-	bcrypt_gensalt( logRounds, salt );
+	bcrypt_gensalt( log_rounds, salt );
 
 	lua_pushstring( L, salt );
 
