@@ -5,7 +5,9 @@ assert( salt:len() == 29 )
 
 local digest = bcrypt.digest( salt, salt )
 assert( bcrypt.verify( salt, digest ) )
-assert( not bcrypt.verify( salt:gsub( "^%$", "#" ), digest ) )
+assert( not bcrypt.verify( salt:gsub( "(.)$", function( ch )
+	return string.char( ( ch:byte() + 1 ) % 255 )
+end ), digest ) )
 
 local tests = {
 	{
