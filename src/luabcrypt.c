@@ -30,12 +30,10 @@ static int luabcrypt_gensalt( lua_State *L )
 	u_int8_t log_rounds = luaL_checkinteger( L, 1 );
 
 	// because the OpenBSD implementation says so
-	char *salt = malloc( 7 + ( BCRYPT_MAXSALT * 4 + 2 ) / 3 + 1 );
+	char salt[ 7 + ( BCRYPT_MAXSALT * 4 + 2 ) / 3 + 1 ];
 	bcrypt_gensalt( log_rounds, salt );
 
 	lua_pushstring( L, salt );
-
-	free( salt );
 
 	return 1;
 }
@@ -46,14 +44,12 @@ static int luabcrypt_verify( lua_State *L )
 	const char *key = luaL_checkstring( L, 1 );
 	const char *digest = luaL_checkstring( L, 2 );
 
-	char *encrypted = malloc( _PASSWORD_LEN );
+	char encrypted[ _PASSWORD_LEN ];
 	bcrypt( key, digest, encrypted );
 
 	int verified = strncmp( encrypted, digest, _PASSWORD_LEN ) == 0;
 
 	lua_pushboolean( L, verified );
-
-	free( encrypted );
 
 	return 1;
 }
