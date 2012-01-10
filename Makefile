@@ -1,7 +1,7 @@
 CC = gcc
 SRCDIR = src/
 CFLAGS = -O2 -shared -fPIC
-LDFLAGS = -lcrypto -llua
+LDFLAGS = -lcrypto
 WARNINGS = -Wall -Wextra -Werror
 
 all: bcrypt test
