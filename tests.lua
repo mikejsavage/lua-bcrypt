@@ -1,6 +1,6 @@
 require( "bcrypt" )
 
-local salt = bcrypt.gensalt( 5 )
+local salt = bcrypt.salt( 5 )
 assert( salt:len() == 29 )
 
 local digest = bcrypt.digest( salt, salt )

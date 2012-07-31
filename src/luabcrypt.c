@@ -21,8 +21,8 @@ static int luabcrypt_digest( lua_State *L )
 	return 1;
 }
 
-// bcrypt.gensalt( logRounds )
-static int luabcrypt_gensalt( lua_State *L )
+// bcrypt.salt( logRounds )
+static int luabcrypt_salt( lua_State *L )
 {
 	u_int8_t log_rounds = luaL_checkinteger( L, 1 );
 
@@ -54,7 +54,7 @@ static int luabcrypt_verify( lua_State *L )
 struct luaL_reg luabcrypt_lib[] =
 {
 	{ "digest", luabcrypt_digest },
-	{ "gensalt", luabcrypt_gensalt },
+	{ "salt", luabcrypt_salt },
 	{ "verify", luabcrypt_verify },
 	{ NULL, NULL },
 };
