@@ -1,11 +1,10 @@
-A Lua wrapper for the OpenBSD implementation of bcrypt. Note that it
-will run on other operating systems.
+A Lua wrapper for [crypt_blowfish](http://www.openwall.com/crypt/).
 
 
 Requirements
 ------------
 
-luabcrypt requires OpenSSL (for salt generation) and Lua to compile.
+lua 5.2
 
 
 Usage
