@@ -1,4 +1,3 @@
-CC = gcc
 CFLAGS = -O2 -shared -fPIC -fomit-frame-pointer -funroll-loops
 LDFLAGS = -lcrypto -Ilib/bcrypt
 WARNINGS = -Wall -Wextra -Werror -Wbad-function-cast -Wcast-align -Wcast-qual -Wstrict-prototypes -Wshadow -Wundef -Wpointer-arith
