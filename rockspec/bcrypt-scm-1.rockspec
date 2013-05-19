@@ -2,12 +2,12 @@ package = "bcrypt"
 version = "scm-1"
 
 source = {
-	url = "git://github.com/mikejsavage/luabcrypt.git",
+	url = "git://github.com/mikejsavage/lua-bcrypt.git",
 }
 
 description = {
 	summary = "A Lua wrapper for bcrypt",
-	homepage = "http://github.com/mikejsavage/luabcrypt",
+	homepage = "http://github.com/mikejsavage/lua-bcrypt",
 	license = "MIT",
 	maintainer = "Mike Savage",
 }
