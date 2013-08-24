@@ -4,7 +4,7 @@ A Lua wrapper for [crypt_blowfish](http://www.openwall.com/crypt/).
 Requirements
 ------------
 
-lua 5.2
+lua >= 5.1
 
 
 Usage
