@@ -10,7 +10,7 @@ lua >= 5.1
 Usage
 -----
 
-	require( "bcrypt" )
+	local bcrypt = require( "bcrypt" )
 
 	local salt = bcrypt.salt( 5 )
 	local digest = bcrypt.digest( "password", salt )
