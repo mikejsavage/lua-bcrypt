@@ -36,7 +36,8 @@ static int luabcrypt_digest( lua_State* L ) {
 }
 
 void randomBytes( char* output, size_t bytes ) {
-	read( urandom, output, bytes );
+	size_t bytes_read = read( urandom, output, bytes );
+	(void)bytes_read;
 }
 
 // bcrypt.salt( logRounds )
