@@ -21,9 +21,9 @@
 static int urandom;
 
 // bcrypt.digest( key, salt )
-static int luabcrypt_digest( lua_State* L ) {
-	const char* key = luaL_checkstring( L, 1 );
-	const char* salt = luaL_checkstring( L, 2 );
+static int luabcrypt_digest( lua_State * const L ) {
+	const char * const key = luaL_checkstring( L, 1 );
+	const char * const salt = luaL_checkstring( L, 2 );
 
 	char hash[ HASH_SIZE ];
 	memset( hash, 0, sizeof( hash ) );
@@ -36,13 +36,13 @@ static int luabcrypt_digest( lua_State* L ) {
 }
 
 // bcrypt.salt( logRounds )
-static int luabcrypt_salt( lua_State* L ) {
-	unsigned long logRounds = luaL_checkinteger( L, 1 );
+static int luabcrypt_salt( lua_State * const L ) {
+	const unsigned long logRounds = luaL_checkinteger( L, 1 );
 
 	char entropy[ ENTROPY_SIZE ];
 	char salt[ SALT_SIZE ];
 
-	ssize_t bytes = read( urandom, entropy, sizeof( entropy ) );
+	const ssize_t bytes = read( urandom, entropy, sizeof( entropy ) );
 
 	if( bytes != sizeof( entropy ) ) {
 		lua_pushstring( L, strerror( errno ) );
@@ -58,30 +58,30 @@ static int luabcrypt_salt( lua_State* L ) {
 }
 
 // bcrypt.verify( key, digest )
-static int luabcrypt_verify( lua_State* L ) {
-	const char* key = luaL_checkstring( L, 1 );
-	const char* digest = luaL_checkstring( L, 2 );
+static int luabcrypt_verify( lua_State * const L ) {
+	const char * const key = luaL_checkstring( L, 1 );
+	const char * const digest = luaL_checkstring( L, 2 );
 
 	char hash[ HASH_SIZE ];
 	memset( hash, 0, sizeof( hash ) );
 
 	crypt_rn( key, digest, hash, sizeof( hash ) );
 
-	int verified = strncmp( hash, digest, sizeof( hash ) ) == 0;
+	const int verified = strncmp( hash, digest, sizeof( hash ) ) == 0;
 
 	lua_pushboolean( L, verified );
 
 	return 1;
 }
 
-static struct luaL_Reg luabcrypt_lib[] = {
+static const struct luaL_Reg luabcrypt_lib[] = {
 	{ "digest", luabcrypt_digest },
 	{ "salt", luabcrypt_salt },
 	{ "verify", luabcrypt_verify },
 	{ NULL, NULL },
 };
 
-LUALIB_API int luaopen_bcrypt( lua_State* L ) {
+LUALIB_API int luaopen_bcrypt( lua_State * const L ) {
 	urandom = open( "/dev/urandom", O_RDONLY );
 
 	if( urandom == -1 ) {
