@@ -35,10 +35,6 @@ static int luabcrypt_digest( lua_State* L ) {
 	return 1;
 }
 
-void randomBytes( char* output, size_t bytes ) {
-	read( urandom, output, bytes );
-}
-
 // bcrypt.salt( logRounds )
 static int luabcrypt_salt( lua_State* L ) {
 	unsigned long logRounds = luaL_checkinteger( L, 1 );
@@ -46,7 +42,14 @@ static int luabcrypt_salt( lua_State* L ) {
 	char entropy[ ENTROPY_SIZE ];
 	char salt[ SALT_SIZE ];
 
-	randomBytes( entropy, sizeof( entropy ) );
+	ssize_t bytes = read( urandom, entropy, sizeof( entropy ) );
+
+	if( bytes != sizeof( entropy ) ) {
+		lua_pushstring( L, strerror( errno ) );
+
+		return lua_error( L );
+	}
+
 	crypt_gensalt_rn( "$2y$", logRounds, entropy, sizeof( entropy ), salt, sizeof( salt ) );
 
 	lua_pushstring( L, salt );
