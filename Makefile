@@ -1,17 +1,25 @@
-CFLAGS = -O2 -shared -fPIC -fomit-frame-pointer -funroll-loops
-LDFLAGS = -lcrypto -Ilib/bcrypt
-WARNINGS = -Wall -Wextra -Werror -Wbad-function-cast -Wcast-align -Wcast-qual -Wstrict-prototypes -Wshadow -Wundef -Wpointer-arith
+SOURCES = $(wildcard src/**/*.c src/*.c)
+OBJECTS = $(patsubst %.c,%.o,$(SOURCES))
 
-BCRYPT_DIR = lib/bcrypt
-BCRYPT_OBJS = $(BCRYPT_DIR)/crypt_blowfish.o $(BCRYPT_DIR)/x86.o $(BCRYPT_DIR)/crypt_gensalt.o $(BCRYPT_DIR)/wrapper.o
+TARGET = bcrypt.so
 
-all: crypto_blowfish bcrypt
+LIBS = -lcrypto
+CFLAGS = -O2 -shared -fPIC -std=c11 -D_GNU_SOURCE -Wall -Wextra -Wno-nonnull -Wwrite-strings -Wformat=2 -DNDEBUG -Ilib/bcrypt
 
-crypto_blowfish:
+BCRYPT_OBJECTS = lib/bcrypt/crypt_blowfish.o lib/bcrypt/x86.o lib/bcrypt/crypt_gensalt.o lib/bcrypt/wrapper.o
+
+.PHONY: debug test clean
+
+all: $(TARGET)
+
+debug: CFLAGS += -ggdb -UNDEBUG
+debug: all
+
+lib/bcrypt/%.o:
 	make -C lib/bcrypt
 
-bcrypt: src/main.c
-	${CC} -o $@.so $^ ${BCRYPT_OBJS} ${CFLAGS} ${LDFLAGS} ${WARNINGS}
+$(TARGET): $(OBJECTS) $(BCRYPT_OBJECTS)
+	$(CC) -o $(TARGET) $^ $(CFLAGS) $(LIBS)
 
 test:
 	make -C lib/bcrypt check
@@ -19,3 +27,4 @@ test:
 
 clean:
 	make -C lib/bcrypt clean
+	rm -f $(OBJECTS) $(TARGET)
