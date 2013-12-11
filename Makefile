@@ -8,6 +8,10 @@ CFLAGS = -O2 -shared -fPIC -std=c11 -D_GNU_SOURCE -Wall -Wextra -Wno-nonnull -Ww
 
 BCRYPT_OBJECTS = lib/bcrypt/crypt_blowfish.o lib/bcrypt/x86.o lib/bcrypt/crypt_gensalt.o lib/bcrypt/wrapper.o
 
+ifdef LUA_INCDIR
+	CFLAGS += -I$(LUA_INCDIR)
+endif
+
 .PHONY: debug test clean
 
 all: $(TARGET)
