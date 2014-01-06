@@ -3,7 +3,7 @@ OBJECTS = $(patsubst %.c,%.o,$(SOURCES))
 
 TARGET = bcrypt.so
 
-LIBS = -lcrypto
+LIBS =
 CFLAGS = -O2 -shared -fPIC -std=c99 -D_GNU_SOURCE -Wall -Wextra -Wno-nonnull -Wwrite-strings -Wformat=2 -DNDEBUG -Ilib/bcrypt
 
 BCRYPT_OBJECTS = lib/bcrypt/crypt_blowfish.o lib/bcrypt/x86.o lib/bcrypt/crypt_gensalt.o lib/bcrypt/wrapper.o
