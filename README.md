@@ -7,6 +7,12 @@ Requirements
 lua >= 5.1
 
 
+Installation
+------------
+
+	luarocks install bcrypt
+
+
 Usage
 -----
 
