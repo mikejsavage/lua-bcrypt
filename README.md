@@ -10,7 +10,7 @@ lua >= 5.1
 Installation
 ------------
 
-	luarocks install bcrypt
+	$ luarocks install bcrypt
 
 
 Usage
