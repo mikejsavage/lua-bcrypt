@@ -10,8 +10,8 @@
 
 #include "ow-crypt.h"
 
-#define HASH_SIZE 184
-#define SALT_SIZE 128
+#define CRYPT_OUTPUT_SIZE ( 7 + 22 + 31 + 1 )
+#define CRYPT_GENSALT_OUTPUT_SIZE ( 7 + 22 + 1 )
 #define ENTROPY_SIZE 32
 
 #if LUA_VERSION_NUM < 502
@@ -20,37 +20,74 @@
 
 static int urandom;
 
-// bcrypt.digest( key, salt )
+static int makesalt( char * const salt, const size_t size, const int rounds ) {
+	char entropy[ ENTROPY_SIZE ];
+	const ssize_t bytes = read( urandom, entropy, sizeof( entropy ) );
+
+	if( bytes != sizeof( entropy ) ) {
+		return 1;
+	}
+
+	const char * const ok = crypt_gensalt_rn( "$2y$", rounds, entropy, sizeof( entropy ), salt, size );
+
+	if( ok == NULL ) {
+		return 1;
+	}
+
+	return 0;
+}
+
+// bcrypt.digest( key, [salt/rounds] )
 static int luabcrypt_digest( lua_State * const L ) {
 	const char * const key = luaL_checkstring( L, 1 );
-	const char * const salt = luaL_checkstring( L, 2 );
+	const long rounds = lua_tointeger( L, 2 );
 
-	char hash[ HASH_SIZE ];
+	char hash[ CRYPT_OUTPUT_SIZE ];
 	memset( hash, 0, sizeof( hash ) );
 
-	crypt_rn( key, salt, hash, sizeof( hash ) );
+	char newsalt[ CRYPT_GENSALT_OUTPUT_SIZE ];
+	const char * salt = NULL;
+
+	if( rounds != 0 ) {
+		int rv_salt = makesalt( newsalt, sizeof( newsalt ), rounds );
+
+		if( rv_salt != 0 ) {
+			lua_pushstring( L, strerror( errno ) );
+
+			return lua_error( L );
+		}
+
+		salt = newsalt;
+	}
+	else {
+		salt = luaL_checkstring( L, 2 );
+	}
+
+	const char * const rv_crypt = crypt_rn( key, salt, hash, sizeof( hash ) );
+
+	if( rv_crypt == NULL ) {
+		lua_pushstring( L, strerror( errno ) );
+
+		return lua_error( L );
+	}
 
 	lua_pushstring( L, hash );
 
 	return 1;
 }
 
-// bcrypt.salt( logRounds )
+// bcrypt.salt( rounds )
 static int luabcrypt_salt( lua_State * const L ) {
-	const unsigned long logRounds = luaL_checkinteger( L, 1 );
+	const unsigned long rounds = luaL_checkinteger( L, 1 );
 
-	char entropy[ ENTROPY_SIZE ];
-	char salt[ SALT_SIZE ];
+	char salt[ CRYPT_GENSALT_OUTPUT_SIZE ];
+	int rv = makesalt( salt, sizeof( salt ), rounds );
 
-	const ssize_t bytes = read( urandom, entropy, sizeof( entropy ) );
-
-	if( bytes != sizeof( entropy ) ) {
+	if( rv != 0 ) {
 		lua_pushstring( L, strerror( errno ) );
 
 		return lua_error( L );
 	}
-
-	crypt_gensalt_rn( "$2y$", logRounds, entropy, sizeof( entropy ), salt, sizeof( salt ) );
 
 	lua_pushstring( L, salt );
 
@@ -62,7 +99,7 @@ static int luabcrypt_verify( lua_State * const L ) {
 	const char * const key = luaL_checkstring( L, 1 );
 	const char * const digest = luaL_checkstring( L, 2 );
 
-	char hash[ HASH_SIZE ];
+	char hash[ CRYPT_OUTPUT_SIZE ];
 	memset( hash, 0, sizeof( hash ) );
 
 	crypt_rn( key, digest, hash, sizeof( hash ) );

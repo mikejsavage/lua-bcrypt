@@ -11,8 +11,17 @@ Usage
 -----
 
 	local bcrypt = require( "bcrypt" )
+	local rounds = 5 -- tune this as appropriate
+	
+	local digest = bcrypt.digest( "password", rounds )
+	assert( bcrypt.verify( "password", digest ) )
 
-	local salt = bcrypt.salt( 5 )
+You can also explicitly pass a salt to `bcrypt.digest`:
+
+	local bcrypt = require( "bcrypt" )
+	local rounds = 5 -- tune this as appropriate
+	
+	local salt = bcrypt.salt( rounds )
 	local digest = bcrypt.digest( "password", salt )
-
+	
 	assert( bcrypt.verify( "password", digest ) )
