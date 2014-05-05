@@ -60,7 +60,7 @@ static int open_random( const char * const path ) {
 	}
 
 	// is this a random device?
-	if( S_ISCHR( stat_buf.st_mode ) != 0 && stat_buf.st_rdev != makedev( 1, 8 ) && stat_buf.st_rdev != makedev( 1, 9 ) ) {
+	if( S_ISCHR( stat_buf.st_mode ) == 0 || ( stat_buf.st_rdev != makedev( 1, 8 ) && stat_buf.st_rdev != makedev( 1, 9 ) ) ) {
 		( void ) fclose( f );
 
 		return BC_ERR_RNG;
