@@ -18,6 +18,10 @@ end ), digest ) )
 -- test we can't use a bad entropy source
 local ok = pcall( bcrypt.random, "/dev/null" )
 assert( not ok )
+local ok = pcall( bcrypt.random, "/doesnotexist" )
+assert( not ok )
+local ok = pcall( bcrypt.random, "/etc/passwd" )
+assert( not ok )
 
 -- some test inputs, mostly taken from john the ripper
 local tests = {
