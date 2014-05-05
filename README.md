@@ -54,3 +54,31 @@ fail as early as possible on errors in the common use case.
 Therefore, if you wish to use chroot, you should run:
 
 	mknod -m 644 /path/to/chroot/dev/urandom c 1 9
+
+
+Security
+--------
+
+You might have noticed that `luabcrypt_verify` doesn't use a constant
+time comparison and `luabcrypt_digest` doesn't take steps to zero out
+the entropy buffer. I don't think either of these are a problem.
+
+I haven't used a constant time comparison because I'm not sure how to
+write one and then guarantee the compiler won't optimise it out. I don't
+think this is a big deal because strong hash functions, such as bcrypt,
+have good preimage resistance. That said, the code is currently relying
+on this holding forever, and if you aren't happy with that you shouldn't
+use it.
+
+I don't zero out the entropy buffer after generating a salt for the same
+reason. There are two ways in which this can be obtained:
+
+* another program calls `malloc` and gets handed memory that was
+  previously used as an entropy buffer
+* the entropy buffer is read directly from memory
+
+I don't think it matters because you shouldn't be able to predict the
+output of a CSPRNG even given previous outputs. If you are worried about
+the second case, note that Lua interns short strings which will include
+passwords handled by your application so an attacker can read those
+directly instead.
