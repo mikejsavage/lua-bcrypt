@@ -182,7 +182,7 @@ static int luabcrypt_random( lua_State * const L ) {
 	int rv = open_random( path );
 
 	if( rv != 0 ) {
-		lua_pushstring( L, strerror( errno ) );
+		lua_pushstring( L, my_strerror( rv ) );
 
 		return lua_error( L );
 	}
