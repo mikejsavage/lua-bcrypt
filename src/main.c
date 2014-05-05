@@ -15,7 +15,7 @@
 #define ENTROPY_SIZE 32
 
 #if LUA_VERSION_NUM < 502
-	#define luaL_newlib( L, l ) ( lua_newtable( L ), luaL_register( L, NULL, l ) ) 
+	#define luaL_newlib( L, l ) ( lua_newtable( L ), luaL_register( L, NULL, l ) )
 #endif
 
 static int urandom;
