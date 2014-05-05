@@ -66,6 +66,11 @@ static int open_random( const char * const path ) {
 		return BC_ERR_RNG;
 	}
 
+	if( random_file != NULL ) {
+		// we never write anything so this should be ok...
+		( void ) fclose( random_file );
+	}
+
 	random_file = f;
 
 	return 0;
