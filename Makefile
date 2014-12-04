@@ -11,6 +11,12 @@ ifdef LUA_INCDIR
 	CFLAGS += -I$(LUA_INCDIR)
 endif
 
+ifneq ($(OS),Windows_NT)
+	ifeq ($(shell uname -s),Darwin)
+		CFLAGS += -bundle -undefined dynamic_lookup
+	endif
+endif
+
 .PHONY: debug test clean
 
 all: $(TARGET)
