@@ -21,6 +21,10 @@ build = {
 
 	install_pass = false,
 
+	build_variables = {
+		LUA_INCDIR = "$(LUA_INCDIR)",
+	},
+
 	install = {
 		lib = {
 			[ "bcrypt" ] = "bcrypt.so",
