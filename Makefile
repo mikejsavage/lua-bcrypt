@@ -3,7 +3,7 @@ OBJECTS = $(patsubst %.c,%.o,$(SOURCES))
 
 TARGET = bcrypt.so
 
-CFLAGS = -O2 -shared -fPIC -std=c99 -D_GNU_SOURCE -Wall -Wextra -Wno-nonnull -Wwrite-strings -Wformat=2 -DNDEBUG -Ilib/bcrypt
+CFLAGS = -O2 -fPIC -std=c99 -D_GNU_SOURCE -Wall -Wextra -Wno-nonnull -Wwrite-strings -Wformat=2 -DNDEBUG -Ilib/bcrypt
 
 BCRYPT_OBJECTS = lib/bcrypt/crypt_blowfish.o lib/bcrypt/x86.o lib/bcrypt/crypt_gensalt.o lib/bcrypt/wrapper.o
 
@@ -11,10 +11,10 @@ ifdef LUA_INCDIR
 	CFLAGS += -I$(LUA_INCDIR)
 endif
 
-ifneq ($(OS),Windows_NT)
-	ifeq ($(shell uname -s),Darwin)
-		CFLAGS += -bundle -undefined dynamic_lookup
-	endif
+ifeq ($(shell uname -s),Darwin)
+	CFLAGS += -bundle -undefined dynamic_lookup
+else
+	CFLAGS += -shared
 endif
 
 .PHONY: debug test clean
