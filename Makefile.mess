@@ -1,0 +1,44 @@
+# This is more or less what libressl does
+# See http://openbsd.cs.toronto.edu/cgi-bin/cvsweb/src/lib/libssl/src/crypto/mem_clr.c?rev=1.4&content-type=text/x-cvsweb-markup
+CFLAGS += -DOPENSSL_cleanse=explicit_bzero 
+
+# Make pwd.h define bcrypt_newnhash/bcrypt_checkpass
+CFLAGS += -D__BSD_VISIBLE
+
+# GCC whines without this. Assume everyone has strndup anyway
+CFLAGS += -DHAVE_STRNDUP
+
+# Let Luarocks point us to the right headers
+ifdef LUA_INCDIR
+	CFLAGS += -I$(LUA_INCDIR)
+endif
+
+# OS detection
+uname := $(shell uname -s)
+
+ifneq ($(uname),Darwin)
+	LDFLAGS += -shared
+else
+	LDFLAGS += -bundle -undefined dynamic_lookup
+endif
+
+CFLAGS += -Iinclude
+
+SRCS += compat/safebfuns.c
+SRCS += compat/bcrypt/bcrypt.c
+SRCS += compat/bcrypt/blowfish.c
+SRCS += compat/arc4random/arc4random.c
+SRCS += compat/strlcpy.c
+SRCS += compat/sha/sha512.c
+
+ifeq ($(uname),Linux)
+	SRCS += compat/getentropy/getentropy_linux.c
+endif
+
+ifeq ($(uname),Darwin)
+	SRCS += compat/getentropy/getentropy_osx.c
+endif
+
+ifeq ($(uname),FreeBSD)
+	SRCS += compat/getentropy/getentropy_freebsd.c
+endif

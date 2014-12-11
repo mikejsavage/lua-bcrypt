@@ -1,6 +1,4 @@
 .tags
 
 bcrypt.so
-crypt_test
-
 *.o

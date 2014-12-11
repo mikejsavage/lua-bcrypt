@@ -1,39 +1,20 @@
-SOURCES = $(wildcard src/**/*.c src/*.c)
-OBJECTS = $(patsubst %.c,%.o,$(SOURCES))
+include Makefile.mess
 
-TARGET = bcrypt.so
+SRCS += src/main.c
 
-CFLAGS = -O2 -fPIC -std=c99 -D_GNU_SOURCE -Wall -Wextra -Wno-nonnull -Wwrite-strings -Wformat=2 -DNDEBUG -Ilib/bcrypt
+CFLAGS += -Wall -Wno-pointer-sign
+CFLAGS += -O2 -fPIC -DNDEBUG
 
-BCRYPT_OBJECTS = lib/bcrypt/crypt_blowfish.o lib/bcrypt/x86.o lib/bcrypt/crypt_gensalt.o lib/bcrypt/wrapper.o
+OBJS := $(patsubst %.c,%.o,$(SRCS))
 
-ifdef LUA_INCDIR
-	CFLAGS += -I$(LUA_INCDIR)
-endif
+all: bcrypt.so
 
-ifeq ($(shell uname -s),Darwin)
-	CFLAGS += -bundle -undefined dynamic_lookup
-else
-	CFLAGS += -shared
-endif
-
-.PHONY: debug test clean
-
-all: $(TARGET)
-
-debug: CFLAGS += -ggdb -UNDEBUG
+debug: CFLAGS += -ggdb3 -UNDEBUG
 debug: all
 
-lib/bcrypt/%.o:
-	make -C lib/bcrypt
-
-$(TARGET): $(OBJECTS) $(BCRYPT_OBJECTS)
-	$(CC) -o $(TARGET) $^ $(CFLAGS)
-
-test:
-	make -C lib/bcrypt check
-	@lua tests.lua
+bcrypt.so: $(OBJS)
+	$(CC) -o bcrypt.so $(LDFLAGS) $(OBJS)
 
 clean:
-	make -C lib/bcrypt clean
-	rm -f $(OBJECTS) $(TARGET)
+	rm -f bcrypt.so
+	rm -f $(OBJS)

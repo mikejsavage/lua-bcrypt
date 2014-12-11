@@ -2,27 +2,6 @@
 
 local bcrypt = require( "bcrypt" )
 
--- test salt generation
-local salt = bcrypt.salt( 5 )
-assert( salt:len() == 29 )
-
--- test verification
-local digest = bcrypt.digest( salt, salt )
-assert( bcrypt.verify( salt, digest ) )
-
--- test verification failure
-assert( not bcrypt.verify( salt:gsub( "(.)$", function( ch )
-	return string.char( ( ch:byte() + 1 ) % 255 )
-end ), digest ) )
-
--- test we can't use a bad entropy source
-local ok = pcall( bcrypt.random, "/dev/null" )
-assert( not ok )
-local ok = pcall( bcrypt.random, "/doesnotexist" )
-assert( not ok )
-local ok = pcall( bcrypt.random, "/etc/passwd" )
-assert( not ok )
-
 -- some test inputs, mostly taken from john the ripper
 local tests = {
 	{

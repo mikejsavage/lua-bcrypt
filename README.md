@@ -1,4 +1,4 @@
-A Lua wrapper for [crypt_blowfish](http://www.openwall.com/crypt/).
+A Lua wrapper for OpenBSD's bcrypt.
 
 
 Requirements
@@ -17,68 +17,81 @@ Usage
 -----
 
 	local bcrypt = require( "bcrypt" )
-	local rounds = 5 -- tune this as appropriate
 	
-	local digest = bcrypt.digest( "password", rounds )
+	-- Bigger numbers here will make your digest exponentially harder to compute
+	local log_rounds = 9
+	
+	local digest = bcrypt.digest( "password", log_rounds )
 	assert( bcrypt.verify( "password", digest ) )
 
-You can also explicitly pass a salt to `bcrypt.digest`:
 
-	local bcrypt = require( "bcrypt" )
-	local rounds = 5 -- tune this as appropriate
-	
-	local salt = bcrypt.salt( rounds )
-	local digest = bcrypt.digest( "password", salt )
-	
-	assert( bcrypt.verify( "password", digest ) )
+Security concerns
+-----------------
 
-If you want to use a different random device, you can use
-`bcrypt.random`:
+Lua will keep plaintext passwords around in memory as part of its string
+interning mechanism. As far as I'm aware, there's nothing I can do about
+this.
 
-	local bcrypt = require( "bcrypt" )
-	bcrypt.random( "/dev/random" )
-	local digest = bcrypt.digest( "password", rounds )
+
+Tuning
+------
+
+If you would like to automatically tune the number of rounds to your
+hardware, you can include a function like:
+
+	function bcrypt.tune( t )
+		local SAMPLES = 10
+		local rounds = 5
 	
-	-- bcrypt.random( "/dev/null" ) - fails
+		while true do
+			local total = 0
+	
+			for i = 1, SAMPLES do
+				local start = os.clock()
+				bcrypt.digest( "asdf", rounds )
+				local delta = os.clock() - start
+	
+				total = total + delta
+			end
+	
+			if ( total / SAMPLES ) * 1000 >= t then
+				return rounds - 1
+			end
+	
+			rounds = rounds + 1
+		end
+	end
+
+This function returns the largest load factor such that `bcrypt.digest(
+str, work )` takes less than `t` milliseconds (assuming your CPU isn't
+dodgy).
+
+Note that this will take at least `2 * SAMPLES * t` ms to evaluate.
 
 
 Chroot
 ------
 
-If you want to use `lua-bcrypt` from inside a chroot, `/dev/urandom`
-must still exist when `require( "bcrypt" )` is called, even if you are
-planning to use a different random device. The reasoning behind this is
-that chroots are a less common use case of this library, and we should
-fail as early as possible on errors in the common use case.
+[lua-setuid]: https://github.com/mikejsavage/lua-setuid
+[test-chroot]: https://github.com/mikejsavage/lua-bcrypt/blob/master/test-chroot.lua
 
-Therefore, if you wish to use chroot, you should run:
+Some operating systems do not provide a method for reliably getting
+random data from inside a chroot. One workaround for this is to chroot
+after initialising lua-bcrypt, for example by using
+[lua-setuid][lua-setuid].
 
+	local setuid = require( "setuid" )
+	local bcrypt = require( "bcrypt" )
+	
+	assert( setuid.chroot( "." ) )
+	assert( not io.open( "/etc/passwd", "r" ) )
+	
+	print( bcrypt.digest( "adsf", 5 ) )
+
+There are also operating system specific workarounds. On
+non-bleeding-edge (earlier than 3.17) Linux kernels, you can run:
+
+	mkdir /path/to/chroot/dev
 	mknod -m 644 /path/to/chroot/dev/urandom c 1 9
 
-
-Security
---------
-
-You might have noticed that `luabcrypt_verify` doesn't use a constant
-time comparison and `luabcrypt_digest` doesn't take steps to zero out
-the entropy buffer. I don't think either of these are a problem.
-
-I haven't used a constant time comparison because I'm not sure how to
-write one and then guarantee the compiler won't optimise it out. I don't
-think this is a big deal because strong hash functions, such as bcrypt,
-have good preimage resistance. That said, the code is currently relying
-on this holding forever, and if you aren't happy with that you shouldn't
-use it.
-
-I don't zero out the entropy buffer after generating a salt for the same
-reason. There are two ways in which this can be obtained:
-
-* another program calls `malloc` and gets handed memory that was
-  previously used as an entropy buffer
-* the entropy buffer is read directly from memory
-
-I don't think it matters because you shouldn't be able to predict the
-output of a CSPRNG even given previous outputs. If you are worried about
-the second case, note that Lua interns short strings which will include
-passwords handled by your application so an attacker can read those
-directly instead.
+I have included a test script in [`test-chroot.lua`][test-chroot]. 

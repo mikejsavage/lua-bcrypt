@@ -1,0 +1,10 @@
+LIB = bcrypt
+SRCS = src/main.c
+
+LDADD = -lcrypto
+CFLAGS += `pkg-config --cflags lua51`
+
+SHLIB_MAJOR = 2
+SHLIB_MINOR = 0
+
+.include <bsd.lib.mk>
