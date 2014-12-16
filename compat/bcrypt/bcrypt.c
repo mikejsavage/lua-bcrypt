@@ -114,6 +114,7 @@ bcrypt_hashpass(const char *key, const char *salt, char *encrypted,
 		key_len = (u_int8_t)(strlen(key) + 1);
 		break;
 	case 'b':
+	case 'y':
 		/* strlen() returns a size_t, but the function calls
 		 * below result in implicit casts to a narrower integer
 		 * type, so cap key_len at the actual maximum supported
