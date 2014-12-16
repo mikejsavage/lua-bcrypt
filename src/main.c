@@ -33,7 +33,7 @@ static int luabcrypt_verify( lua_State * const L ) {
 	const char * const password = luaL_checkstring( L, 1 );
 	const char * const goodhash = luaL_checkstring( L, 2 );
 
-	const int ok = bcrypt_checkpass( password, goodhash );
+	const int ok = !bcrypt_checkpass( password, goodhash );
 
 	lua_pushboolean( L, ok );
 

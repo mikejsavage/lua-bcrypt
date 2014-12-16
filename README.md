@@ -22,7 +22,7 @@ Usage
 	local log_rounds = 9
 	
 	local digest = bcrypt.digest( "password", log_rounds )
-	assert( bcrypt.verify( digest, "password" ) )
+	assert( bcrypt.verify( "password", digest ) )
 
 
 Security concerns
