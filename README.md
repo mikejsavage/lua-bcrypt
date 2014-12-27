@@ -7,6 +7,17 @@ Requirements
 lua >= 5.1
 
 
+Copying
+-------
+
+Many of the files in this repository have been taken from OpenBSD's
+tree. You should consult individual file headers for specific licensing
+information. More broadly, everything here is compatible with the [ISC
+license][ISC].
+
+[ISC]: http://en.wikipedia.org/wiki/ISC_license
+
+
 Installation
 ------------
 
