@@ -8,7 +8,7 @@
 	 * http://lists.cs.uiuc.edu/pipermail/cfe-dev/2014-December/040627.html
 	 */
 	#if __has_attribute( noinline ) && __has_attribute( optnone )
-		#define NOOPT __attribute__ (( optnone ))
+		#define NOOPT /* __attribute__ (( optnone )) */
 		#define NOINLINE __attribute__ (( noinline ))
 	#else
 		#error "require clang with noinline and optnone attributes"

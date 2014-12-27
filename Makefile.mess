@@ -42,3 +42,6 @@ endif
 ifeq ($(uname),FreeBSD)
 	SRCS += compat/getentropy/getentropy_freebsd.c
 endif
+
+compat/safebfuns.o: compat/safebfuns.c
+	$(CC) $(CFLAGS) -O0 -c -o $@ $^
