@@ -8,7 +8,7 @@ source = {
 description = {
 	summary = "A Lua wrapper for bcrypt",
 	homepage = "http://github.com/mikejsavage/lua-bcrypt",
-	license = "Public domain/ISC",
+	license = "ISC",
 	maintainer = "Mike Savage",
 }
 
