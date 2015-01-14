@@ -9,7 +9,7 @@ source = {
 description = {
 	summary = "A Lua wrapper for bcrypt",
 	homepage = "http://github.com/mikejsavage/lua-bcrypt",
-	license = "MIT",
+	license = "Public domain/ISC",
 	maintainer = "Mike Savage",
 }
 
