@@ -33,6 +33,7 @@ SRCS += compat/sha/sha512.c
 
 ifeq ($(uname),Linux)
 	SRCS += compat/getentropy/getentropy_linux.c
+	LDFLAGS += -lrt
 endif
 
 ifeq ($(uname),Darwin)
