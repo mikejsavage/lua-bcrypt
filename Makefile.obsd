@@ -5,6 +5,6 @@ LDADD = -lcrypto
 CFLAGS += `pkg-config --cflags lua51`
 
 SHLIB_MAJOR = 2
-SHLIB_MINOR = 0
+SHLIB_MINOR = 1
 
 .include <bsd.lib.mk>
