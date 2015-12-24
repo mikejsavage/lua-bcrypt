@@ -6,9 +6,13 @@ endif
 # OS detection
 uname := $(shell uname -s)
 
-ifeq ($(uname),OpenBSD)
+ifneq ($(uname),Darwin)
 	LDFLAGS += -shared
 else
+	LDFLAGS += -bundle -undefined dynamic_lookup
+endif
+
+ifneq ($(uname),OpenBSD)
 	# This is more or less what libressl does
 	# See http://openbsd.cs.toronto.edu/cgi-bin/cvsweb/src/lib/libssl/src/crypto/mem_clr.c?rev=1.4&content-type=text/x-cvsweb-markup
 	CFLAGS += -DOPENSSL_cleanse=explicit_bzero
@@ -18,12 +22,6 @@ else
 
 	# GCC whines without this. Assume everyone has strndup anyway
 	CFLAGS += -DHAVE_STRNDUP
-
-	ifneq ($(uname),Darwin)
-		LDFLAGS += -shared
-	else
-		LDFLAGS += -bundle -undefined dynamic_lookup
-	endif
 
 	CFLAGS += -Iinclude
 
