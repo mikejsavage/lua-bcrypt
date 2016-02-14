@@ -13,7 +13,7 @@ debug: CFLAGS += -ggdb3 -UNDEBUG
 debug: all
 
 bcrypt.so: $(OBJS)
-	$(CC) -o bcrypt.so $(LDFLAGS) $(OBJS)
+	$(CC) -o bcrypt.so $(OBJS) $(LDFLAGS)
 
 clean:
 	rm -f bcrypt.so
