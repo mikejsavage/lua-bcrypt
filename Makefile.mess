@@ -30,9 +30,9 @@ ifneq ($(uname),OpenBSD)
 	SRCS += compat/bcrypt/blowfish.c
 	SRCS += compat/arc4random/arc4random.c
 	SRCS += compat/strlcpy.c
-	SRCS += compat/sha/sha512.c
 
 	ifeq ($(uname),Linux)
+		SRCS += compat/sha/sha512.c
 		SRCS += compat/getentropy/getentropy_linux.c
 		LDFLAGS += -lrt
 	endif
