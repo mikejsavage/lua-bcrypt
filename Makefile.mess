@@ -28,13 +28,22 @@ ifneq ($(uname),OpenBSD)
 	SRCS += compat/safebfuns.c
 	SRCS += compat/bcrypt/bcrypt.c
 	SRCS += compat/bcrypt/blowfish.c
-	SRCS += compat/arc4random/arc4random.c
-	SRCS += compat/strlcpy.c
+
+	ifneq ($(uname),NetBSD)
+		SRCS += compat/arc4random/arc4random.c
+	endif
 
 	ifeq ($(uname),Linux)
+		SRCS += compat/strlcpy.c
 		SRCS += compat/sha/sha512.c
 		SRCS += compat/getentropy/getentropy_linux.c
 		LDFLAGS += -lrt
+	endif
+
+	ifeq ($(uname),SunOS)
+		CFLAGS += -D__EXTENSIONS__
+		SRCS += compat/sha/sha512.c
+		SRCS += compat/getentropy/getentropy_solaris.c
 	endif
 
 	ifeq ($(uname),Darwin)
