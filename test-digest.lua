@@ -1,5 +1,8 @@
 #! /usr/bin/lua
 
+package.cpath = "./?.so;" .. package.cpath
+
+
 local bcrypt = require( "bcrypt" )
 
 -- some test inputs, mostly taken from john the ripper

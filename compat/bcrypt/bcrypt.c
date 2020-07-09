@@ -32,12 +32,16 @@
  */
 
 #include <sys/types.h>
-#include <blf.h>
+#include "blf.h"
 #include <ctype.h>
 #include <pwd.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdint.h>
+
+#include "../../src/csprng.h"
+#include "../safebfuns.h"
 
 /* This implementation is adaptable to current computing power.
  * You can have up to 2^31 rounds which should be enough for some
@@ -68,7 +72,7 @@ bcrypt_initsalt(int log_rounds, uint8_t *salt, size_t saltbuflen)
 	if (saltbuflen < BCRYPT_SALTSPACE)
 		return -1;
 
-	arc4random_buf(csalt, sizeof(csalt));
+	CSPRNG_Bytes(csalt, sizeof(csalt));
 
 	if (log_rounds < 4)
 		log_rounds = 4;

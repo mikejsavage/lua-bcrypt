@@ -38,15 +38,14 @@
  *	@(#)pwd.h	8.2 (Berkeley) 1/21/94
  */
 
-#ifndef _PWD_H_
-#define	_PWD_H_
+#ifndef _BCRYPT_H_
+#define	_BCRYPT_H_
 
 #include <stddef.h>
-#include <sys/types.h>
 
-#define	_PASSWORD_LEN		128	/* max length, not counting NUL */
+#define	_PASSWORD_LEN 128 /* max length, not counting NUL */
 
-int		bcrypt_newhash(const char *, int, char *, size_t);
-int		bcrypt_checkpass(const char *, const char *);
+int bcrypt_newhash(const char *, int, char *, size_t);
+int bcrypt_checkpass(const char *, const char *);
 
-#endif /* !_PWD_H_ */
+#endif /* _BCRYPT_H_ */

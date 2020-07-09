@@ -14,11 +14,12 @@
  * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 */
 
-#include <pwd.h>
-
 #include <lua.h>
 #include <lualib.h>
 #include <lauxlib.h>
+
+#include "bcrypt.h"
+#include "csprng.h"
 
 #if LUA_VERSION_NUM < 502
 	#define luaL_newlib( L, l ) ( lua_newtable( L ), luaL_register( L, NULL, l ) )
@@ -62,6 +63,7 @@ static const struct luaL_Reg luabcrypt_lib[] = {
 
 LUALIB_API int luaopen_bcrypt( lua_State * const L ) {
 	luaL_newlib( L, luabcrypt_lib );
+	CSPRNG_Init();
 
 	return 1;
 }
