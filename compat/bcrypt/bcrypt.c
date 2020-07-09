@@ -325,30 +325,3 @@ encode_base64(char *b64buffer, const u_int8_t *data, size_t len)
 	*bp = '\0';
 	return 0;
 }
-
-/*
- * classic interface
- */
-char *
-bcrypt_gensalt(u_int8_t log_rounds)
-{
-	static char    gsalt[BCRYPT_SALTSPACE];
-
-	bcrypt_initsalt(log_rounds, gsalt, sizeof(gsalt));
-
-	return gsalt;
-}
-
-char *
-bcrypt(const char *pass, const char *salt)
-{
-	static char    gencrypted[BCRYPT_HASHSPACE];
-	static char    gerror[2];
-
-	/* How do I handle errors ? Return ':' */
-	strlcpy(gerror, ":", sizeof(gerror));
-	if (bcrypt_hashpass(pass, salt, gencrypted, sizeof(gencrypted)) != 0)
-		return gerror;
-
-	return gencrypted;
-}

@@ -23,7 +23,7 @@ ifneq ($(uname),OpenBSD)
 	# GCC whines without this. Assume everyone has strndup anyway
 	CFLAGS += -DHAVE_STRNDUP
 
-	CFLAGS += -Iinclude
+	CFLAGS += -Icompat/include
 
 	SRCS += compat/safebfuns.c
 	SRCS += compat/bcrypt/bcrypt.c
@@ -34,7 +34,6 @@ ifneq ($(uname),OpenBSD)
 	endif
 
 	ifeq ($(uname),Linux)
-		SRCS += compat/strlcpy.c
 		SRCS += compat/sha/sha512.c
 		SRCS += compat/getentropy/getentropy_linux.c
 		LDFLAGS += -lrt

@@ -46,8 +46,6 @@
 
 #define	_PASSWORD_LEN		128	/* max length, not counting NUL */
 
-char		*bcrypt_gensalt(u_int8_t);
-char		*bcrypt(const char *, const char *);
 int		bcrypt_newhash(const char *, int, char *, size_t);
 int		bcrypt_checkpass(const char *, const char *);
 
