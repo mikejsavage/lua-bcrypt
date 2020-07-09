@@ -78,31 +78,3 @@ str, work )` takes less than `t` milliseconds (assuming your CPU isn't
 dodgy).
 
 Note that this will take at least `2 * SAMPLES * t` ms to evaluate.
-
-
-Chroot
-------
-
-[lua-setuid]: https://github.com/mikejsavage/lua-setuid
-[test-chroot]: https://github.com/mikejsavage/lua-bcrypt/blob/master/test-chroot.lua
-
-Some operating systems do not provide a method for reliably getting
-random data from inside a chroot. One workaround for this is to chroot
-after initialising lua-bcrypt, for example by using
-[lua-setuid][lua-setuid].
-
-	local setuid = require( "setuid" )
-	local bcrypt = require( "bcrypt" )
-	
-	assert( setuid.chroot( "." ) )
-	assert( not io.open( "/etc/passwd", "r" ) )
-	
-	print( bcrypt.digest( "adsf", 5 ) )
-
-There are also operating system specific workarounds. On
-non-bleeding-edge (earlier than 3.17) Linux kernels, you can run:
-
-	mkdir /path/to/chroot/dev
-	mknod -m 644 /path/to/chroot/dev/urandom c 1 9
-
-I have included a test script in [`test-chroot.lua`][test-chroot]. 
