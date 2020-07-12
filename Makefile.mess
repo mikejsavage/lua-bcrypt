@@ -34,7 +34,6 @@ ifneq ($(uname),OpenBSD)
 	endif
 
 	ifeq ($(uname),SunOS)
-		CFLAGS += -D__EXTENSIONS__
 		SRCS += compat/sha/sha512.c
 		SRCS += compat/getentropy/getentropy_solaris.c
 	endif
