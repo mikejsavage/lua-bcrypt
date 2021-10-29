@@ -3,6 +3,16 @@ ifdef LUA_INCDIR
 	CFLAGS += -I$(LUA_INCDIR)
 endif
 
+ifdef OPENSSL_DIR
+      CFLAGS += -I$(OPENSSL_DIR)/include
+endif
+
+ifdef CRYPTO_DIR
+      CFLAGS += -I$(CRYPTO_DIR)/include
+endif
+
+
+
 # OS detection
 uname ?= $(shell uname -s)
 

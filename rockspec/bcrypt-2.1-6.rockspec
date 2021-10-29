@@ -24,6 +24,8 @@ build = {
 
 	build_variables = {
 		LUA_INCDIR = "$(LUA_INCDIR)",
+                OPENSSL_DIR = "$(OPENSSL_DIR)",
+                CRYPTO_DIR = "$(CRYPTO_DIR)", 
 	},
 
 	install = {
