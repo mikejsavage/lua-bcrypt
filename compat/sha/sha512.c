@@ -53,6 +53,26 @@
 #include <openssl/opensslv.h>
 #include <openssl/sha.h>
 
+#ifdef BORINGSSL_API_VERSION
+# if (defined(_WIN32) || defined(_WIN64)) && !defined(__MINGW32__)
+#  define SHA_LONG64 unsigned __int64
+#  define U64(C)     C##UI64
+# elif defined(__arch64__)
+#  define SHA_LONG64 unsigned long
+#  define U64(C)     C##UL
+# else
+#  define SHA_LONG64 unsigned long long
+#  define U64(C)     C##ULL
+# endif
+
+#define SHA512_block_field(c) ((c)->p)
+#define SHA_LBLOCK (SHA_CBLOCK/4)
+#else
+
+#define SHA512_block_field(c) ((c)->u.p)
+
+#endif
+
 #if !defined(__STRICT_ALIGNMENT) || defined(SHA512_ASM)
 #define SHA512_BLOCK_CAN_MANAGE_UNALIGNED_DATA
 #endif
@@ -96,36 +116,36 @@ void sha512_block_data_order (SHA512_CTX *ctx, const void *in, size_t num);
 
 int SHA512_Final (unsigned char *md, SHA512_CTX *c)
 	{
-	unsigned char *p=(unsigned char *)c->u.p;
+	unsigned char *p=(unsigned char *)SHA512_block_field(c);
 	size_t n=c->num;
 
 	p[n]=0x80;	/* There always is a room for one */
 	n++;
-	if (n > (sizeof(c->u)-16))
-		memset (p+n,0,sizeof(c->u)-n), n=0,
+	if (n > (sizeof(SHA512_block_field(c))-16))
+		memset (p+n,0,sizeof(SHA512_block_field(c))-n), n=0,
 		sha512_block_data_order (c,p,1);
 
-	memset (p+n,0,sizeof(c->u)-16-n);
+	memset (p+n,0,sizeof(SHA512_block_field(c))-16-n);
 #if BYTE_ORDER == BIG_ENDIAN
-	c->u.d[SHA_LBLOCK-2] = c->Nh;
-	c->u.d[SHA_LBLOCK-1] = c->Nl;
+	SHA512_block_field(c).d[SHA_LBLOCK-2] = c->Nh;
+	SHA512_block_field(c).d[SHA_LBLOCK-1] = c->Nl;
 #else
-	p[sizeof(c->u)-1]  = (unsigned char)(c->Nl);
-	p[sizeof(c->u)-2]  = (unsigned char)(c->Nl>>8);
-	p[sizeof(c->u)-3]  = (unsigned char)(c->Nl>>16);
-	p[sizeof(c->u)-4]  = (unsigned char)(c->Nl>>24);
-	p[sizeof(c->u)-5]  = (unsigned char)(c->Nl>>32);
-	p[sizeof(c->u)-6]  = (unsigned char)(c->Nl>>40);
-	p[sizeof(c->u)-7]  = (unsigned char)(c->Nl>>48);
-	p[sizeof(c->u)-8]  = (unsigned char)(c->Nl>>56);
-	p[sizeof(c->u)-9]  = (unsigned char)(c->Nh);
-	p[sizeof(c->u)-10] = (unsigned char)(c->Nh>>8);
-	p[sizeof(c->u)-11] = (unsigned char)(c->Nh>>16);
-	p[sizeof(c->u)-12] = (unsigned char)(c->Nh>>24);
-	p[sizeof(c->u)-13] = (unsigned char)(c->Nh>>32);
-	p[sizeof(c->u)-14] = (unsigned char)(c->Nh>>40);
-	p[sizeof(c->u)-15] = (unsigned char)(c->Nh>>48);
-	p[sizeof(c->u)-16] = (unsigned char)(c->Nh>>56);
+	p[sizeof(SHA512_block_field(c))-1]  = (unsigned char)(c->Nl);
+	p[sizeof(SHA512_block_field(c))-2]  = (unsigned char)(c->Nl>>8);
+	p[sizeof(SHA512_block_field(c))-3]  = (unsigned char)(c->Nl>>16);
+	p[sizeof(SHA512_block_field(c))-4]  = (unsigned char)(c->Nl>>24);
+	p[sizeof(SHA512_block_field(c))-5]  = (unsigned char)(c->Nl>>32);
+	p[sizeof(SHA512_block_field(c))-6]  = (unsigned char)(c->Nl>>40);
+	p[sizeof(SHA512_block_field(c))-7]  = (unsigned char)(c->Nl>>48);
+	p[sizeof(SHA512_block_field(c))-8]  = (unsigned char)(c->Nl>>56);
+	p[sizeof(SHA512_block_field(c))-9]  = (unsigned char)(c->Nh);
+	p[sizeof(SHA512_block_field(c))-10] = (unsigned char)(c->Nh>>8);
+	p[sizeof(SHA512_block_field(c))-11] = (unsigned char)(c->Nh>>16);
+	p[sizeof(SHA512_block_field(c))-12] = (unsigned char)(c->Nh>>24);
+	p[sizeof(SHA512_block_field(c))-13] = (unsigned char)(c->Nh>>32);
+	p[sizeof(SHA512_block_field(c))-14] = (unsigned char)(c->Nh>>40);
+	p[sizeof(SHA512_block_field(c))-15] = (unsigned char)(c->Nh>>48);
+	p[sizeof(SHA512_block_field(c))-16] = (unsigned char)(c->Nh>>56);
 #endif
 
 	sha512_block_data_order (c,p,1);
@@ -178,7 +198,7 @@ int SHA384_Final (unsigned char *md,SHA512_CTX *c)
 int SHA512_Update (SHA512_CTX *c, const void *_data, size_t len)
 	{
 	SHA_LONG64	l;
-	unsigned char  *p=c->u.p;
+	unsigned char  *p=SHA512_block_field(c);
 	const unsigned char *data=(const unsigned char *)_data;
 
 	if (len==0) return  1;
@@ -190,7 +210,7 @@ int SHA512_Update (SHA512_CTX *c, const void *_data, size_t len)
 
 	if (c->num != 0)
 		{
-		size_t n = sizeof(c->u) - c->num;
+		size_t n = sizeof(SHA512_block_field(c)) - c->num;
 
 		if (len < n)
 			{
@@ -204,7 +224,7 @@ int SHA512_Update (SHA512_CTX *c, const void *_data, size_t len)
 			}
 		}
 
-	if (len >= sizeof(c->u))
+	if (len >= sizeof(SHA512_block_field(c)))
 		{
 #ifndef SHA512_BLOCK_CAN_MANAGE_UNALIGNED_DATA
 		if ((size_t)data%sizeof(c->u.d[0]) != 0)
@@ -215,9 +235,9 @@ int SHA512_Update (SHA512_CTX *c, const void *_data, size_t len)
 				data += sizeof(c->u);
 		else
 #endif
-			sha512_block_data_order (c,data,len/sizeof(c->u)),
+			sha512_block_data_order (c,data,len/sizeof(SHA512_block_field(c))),
 			data += len,
-			len  %= sizeof(c->u),
+			len  %= sizeof(SHA512_block_field(c)),
 			data -= len;
 		}
 
