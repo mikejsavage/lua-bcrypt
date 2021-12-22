@@ -1,20 +1,8 @@
-all: bcrypt.so
+all:
+	luarocks make CFLAGS="-O2 -fPIC -Wall -Wextra" --local
 
-include Makefile.mess
-
-SRCS += src/main.c
-
-CFLAGS += -Wall -Wno-pointer-sign
-CFLAGS += -O2 -fPIC -DNDEBUG
-
-OBJS := $(patsubst %.c,%.o,$(SRCS))
-
-debug: CFLAGS += -ggdb3 -UNDEBUG
-debug: all
-
-bcrypt.so: $(OBJS)
-	$(CC) -o bcrypt.so $(OBJS) $(LDFLAGS)
+debug:
+	luarocks make CFLAGS="-fPIC -g -Wall -Wextra" --local
 
 clean:
-	rm -f bcrypt.so
-	rm -f $(OBJS)
+	rm -f bcrypt.so src/*.o

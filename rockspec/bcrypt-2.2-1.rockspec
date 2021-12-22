@@ -1,8 +1,9 @@
 package = "bcrypt"
-version = "scm-1"
+version = "2.2-1"
 
 source = {
 	url = "git://github.com/mikejsavage/lua-bcrypt.git",
+	tag = "v2.2-1",
 }
 
 description = {
@@ -17,17 +18,14 @@ dependencies = {
 }
 
 build = {
-	type = "make",
-
-	install_pass = false,
-
-	build_variables = {
-		LUA_INCDIR = "$(LUA_INCDIR)",
-	},
-
-	install = {
-		lib = {
-			[ "bcrypt" ] = "bcrypt.so",
-		},
+	type = "builtin",
+	modules = {
+		bcrypt = {
+			"src/main.c",
+			"src/bcrypt.c",
+			"src/blowfish.c",
+			"src/ggentropy.c",
+			"src/safebfuns.c",
+		}
 	},
 }

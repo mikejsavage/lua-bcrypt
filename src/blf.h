@@ -1,4 +1,4 @@
-/* $OpenBSD: blf.h,v 1.7 2007/03/14 17:59:41 grunk Exp $ */
+/* $OpenBSD: blf.h,v 1.8 2021/11/29 01:04:45 djm Exp $ */
 /*
  * Blowfish - a fast block cipher designed by Bruce Schneier
  *
@@ -13,10 +13,7 @@
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in the
  *    documentation and/or other materials provided with the distribution.
- * 3. All advertising materials mentioning features or use of this software
- *    must display the following acknowledgement:
- *      This product includes software developed by Niels Provos.
- * 4. The name of the author may not be used to endorse or promote products
+ * 3. The name of the author may not be used to endorse or promote products
  *    derived from this software without specific prior written permission.
  *
  * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
@@ -30,6 +27,8 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
+#include <stdint.h>
 
 #ifndef _BLF_H_
 #define _BLF_H_
@@ -47,8 +46,8 @@
 
 /* Blowfish context */
 typedef struct BlowfishContext {
-	u_int32_t S[4][256];	/* S-Boxes */
-	u_int32_t P[BLF_N + 2];	/* Subkeys */
+	uint32_t S[4][256];	/* S-Boxes */
+	uint32_t P[BLF_N + 2];	/* Subkeys */
 } blf_ctx;
 
 /* Raw access to customized Blowfish
@@ -57,26 +56,26 @@ typedef struct BlowfishContext {
  *	Blowfish_expand0state( state, key, keylen )
  */
 
-void Blowfish_encipher(blf_ctx *, u_int32_t *, u_int32_t *);
-void Blowfish_decipher(blf_ctx *, u_int32_t *, u_int32_t *);
+void Blowfish_encipher(blf_ctx *, uint32_t *, uint32_t *);
+void Blowfish_decipher(blf_ctx *, uint32_t *, uint32_t *);
 void Blowfish_initstate(blf_ctx *);
-void Blowfish_expand0state(blf_ctx *, const u_int8_t *, u_int16_t);
+void Blowfish_expand0state(blf_ctx *, const uint8_t *, uint16_t);
 void Blowfish_expandstate
-(blf_ctx *, const u_int8_t *, u_int16_t, const u_int8_t *, u_int16_t);
+(blf_ctx *, const uint8_t *, uint16_t, const uint8_t *, uint16_t);
 
 /* Standard Blowfish */
 
-void blf_key(blf_ctx *, const u_int8_t *, u_int16_t);
-void blf_enc(blf_ctx *, u_int32_t *, u_int16_t);
-void blf_dec(blf_ctx *, u_int32_t *, u_int16_t);
+void blf_key(blf_ctx *, const uint8_t *, uint16_t);
+void blf_enc(blf_ctx *, uint32_t *, uint16_t);
+void blf_dec(blf_ctx *, uint32_t *, uint16_t);
 
-void blf_ecb_encrypt(blf_ctx *, u_int8_t *, u_int32_t);
-void blf_ecb_decrypt(blf_ctx *, u_int8_t *, u_int32_t);
+void blf_ecb_encrypt(blf_ctx *, uint8_t *, uint32_t);
+void blf_ecb_decrypt(blf_ctx *, uint8_t *, uint32_t);
 
-void blf_cbc_encrypt(blf_ctx *, u_int8_t *, u_int8_t *, u_int32_t);
-void blf_cbc_decrypt(blf_ctx *, u_int8_t *, u_int8_t *, u_int32_t);
+void blf_cbc_encrypt(blf_ctx *, uint8_t *, uint8_t *, uint32_t);
+void blf_cbc_decrypt(blf_ctx *, uint8_t *, uint8_t *, uint32_t);
 
-/* Converts u_int8_t to u_int32_t */
-u_int32_t Blowfish_stream2word(const u_int8_t *, u_int16_t , u_int16_t *);
+/* Converts uint8_t to uint32_t */
+uint32_t Blowfish_stream2word(const uint8_t *, uint16_t , uint16_t *);
 
 #endif

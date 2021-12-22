@@ -7,17 +7,6 @@ Requirements
 lua >= 5.1
 
 
-Copying
--------
-
-Many of the files in this repository have been taken from OpenBSD's
-tree. You should consult individual file headers for specific licensing
-information. More broadly, everything here is compatible with the [ISC
-license][ISC].
-
-[ISC]: http://en.wikipedia.org/wiki/ISC_license
-
-
 Installation
 ------------
 
@@ -74,7 +63,4 @@ hardware, you can include a function like:
 	end
 
 This function returns the largest load factor such that `bcrypt.digest(
-str, work )` takes less than `t` milliseconds (assuming your CPU isn't
-dodgy).
-
-Note that this will take at least `2 * SAMPLES * t` ms to evaluate.
+str, work )` takes less than `t` milliseconds.
