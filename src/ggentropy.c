@@ -27,9 +27,6 @@
 
 #elif defined( __FreeBSD__ ) || defined( __OpenBSD__ ) || defined( __NetBSD__ )
 #  define PLATFORM_HAS_ARC4RANDOM 1
-
-#else
-#  error new platform
 #endif
 
 #include <stdbool.h>
@@ -71,5 +68,18 @@ bool ggentropy( void * buf, size_t n ) {
 }
 
 #else
-#error new platform
+
+#include <fcntl.h>
+#include <unistd.h>
+
+bool ggentropy( void * buf, size_t n ) {
+	int fd = open("/dev/urandom", O_RDONLY);
+
+	if (fd != -1) {
+		int ret = read(fd, buf, n);
+		close(fd);
+		return ret == n;
+	}
+	return false;
+}
 #endif
