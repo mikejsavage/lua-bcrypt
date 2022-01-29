@@ -20,7 +20,7 @@
 
 #include "bcrypt.h"
 
-#if LUA_VERSION_NUM < 502
+#ifndef luaL_newlib
 	#define luaL_newlib( L, l ) ( lua_newtable( L ), luaL_register( L, NULL, l ) )
 #endif
 
