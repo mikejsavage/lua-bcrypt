@@ -37,6 +37,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <Windows.h>
 
 #include "blf.h"
 #include "ggentropy.h"
@@ -55,10 +56,37 @@
 #define	BCRYPT_SALTSPACE	(7 + (BCRYPT_MAXSALT * 4 + 2) / 3 + 1)
 #define	BCRYPT_HASHSPACE	61
 
+#define STATUS_SUCCESS                      0x00000000
+#define STATUS_UNSUCCESSFUL                 0xC0000001
+
 char   *bcrypt_gensalt(uint8_t);
 
 static int encode_base64(char *, const uint8_t *, size_t);
 static int decode_base64(uint8_t *, size_t, const char *);
+NTSTATUS WINAPI BCryptGenRandom(
+    BCRYPT_ALG_HANDLE hAlgorithm,
+    PUCHAR pbBuffer,
+    ULONG cbBuffer,
+    ULONG dwFlags
+);
+
+NTSTATUS WINAPI BCryptGenRandom(
+    BCRYPT_ALG_HANDLE hAlgorithm,
+    PUCHAR pbBuffer,
+    ULONG cbBuffer,
+    ULONG dwFlags
+) {
+    // Using Windows API functions to implement random number generation
+    // using CryptGenRandom from the Windows Cryptography API
+
+    if (!CryptGenRandom(GetCurrentThread(), cbBuffer, pbBuffer)) {
+        // Handle error, possibly by setting the appropriate error code
+        return STATUS_UNSUCCESSFUL;
+    }
+
+    // Return success status
+    return STATUS_SUCCESS;
+}
 
 /*
  * Generates a salt for this version of crypt.
