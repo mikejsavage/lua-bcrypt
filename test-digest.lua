@@ -1,4 +1,4 @@
-#! /usr/bin/lua
+#! /usr/bin/env lua
 
 for entry in package.cpath:gmatch( "[^;]+" ) do
 	if entry:sub( 1, 2 ) == "./" then
@@ -7,7 +7,7 @@ for entry in package.cpath:gmatch( "[^;]+" ) do
 	end
 end
 
-local bcrypt = require( "bcrypt" )
+local bcrypt = require( "lua-bcrypt" )
 
 -- some test inputs, mostly taken from john the ripper
 local tests = {

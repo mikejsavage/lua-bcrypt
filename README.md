@@ -19,7 +19,7 @@ Usage
 -----
 
 ```lua
-local bcrypt = require("bcrypt")
+local bcrypt = require("lua-bcrypt")
 
 -- Bigger numbers here will make your digest exponentially harder to compute
 local log_rounds = 9
@@ -27,6 +27,18 @@ local log_rounds = 9
 local digest = bcrypt.digest("password", log_rounds)
 assert(bcrypt.verify("password", digest))
 ```
+
+
+`require("bcrypt")` vs `require("lua-bcrypt")`
+----------------------------------------------
+
+Before lua-bcrypt 2.3-2 you had to use `require("bcrypt")`. I will never drop
+support for this so you don't need to modify existing software unless you also
+want it to run on Windows.
+
+Windows has a system DLL called bcrypt.dll and the name clash makes
+`require("bcrypt")` not work. If you want your software to run on Windows you
+must use `require("lua-bcrypt")`
 
 
 Security concerns

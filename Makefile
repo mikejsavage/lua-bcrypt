@@ -5,4 +5,4 @@ debug:
 	luarocks make CFLAGS="-fPIC -g -Wall -Wextra" --no-install
 
 clean:
-	rm -f bcrypt.so src/*.o
+	rm -f bcrypt.so lua-bcrypt.so src/*.o
